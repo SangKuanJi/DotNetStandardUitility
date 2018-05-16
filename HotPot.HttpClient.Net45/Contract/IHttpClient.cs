@@ -57,7 +57,9 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">请求头部</param>
         /// <returns></returns>
-        Task<string> PostStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null);
+        Task<string> PostStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null,
+        string acceptMediaType = "application/json"
+        );
 
         /// <summary>
         /// 同步请求post
@@ -68,7 +70,7 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">请求头部</param>
         /// <returns></returns>
-        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null);
+        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null, string acceptMediaType = "application/json");
 
         /// <summary>
         /// 同步请求post, 请求失败返回 outStr

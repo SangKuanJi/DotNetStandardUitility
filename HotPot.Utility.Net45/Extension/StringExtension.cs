@@ -23,6 +23,52 @@ namespace HotPot.Utility.Net45.Extension
     /// </summary>
     public static class StringExtension
     {
+        /// <summary>
+        /// 替换为空
+        /// </summary>
+        /// <param name="value">原始字符串</param>
+        /// <param name="oldValue">替换字符串</param>
+        /// <returns></returns>
+        public static string ReplaceEmpty(this string value, string oldValue)
+        {
+            return value.Replace(oldValue, string.Empty);
+        }
+        /// <summary>
+        /// 获取身份证生日
+        /// 失败返回 DateTime.MinValue
+        /// </summary>
+        /// <param name="idCard">身份证号码</param>
+        /// <returns>生日yyyy-MM-dd, 失败返回 DateTime.MinValue</returns>
+        public static string IdCardBirthday(this string idCard)
+        {
+            if (!idCard.IsIdentityCard())
+                return DateTime.MinValue.ToString("yyyy-MM-dd");
+
+            return idCard.Substring(6, 4) + "-" + idCard.Substring(10, 2) + "-" + idCard.Substring(12, 2);
+        }
+
+        /// <summary>
+        /// 身份证性别
+        /// 1: 男
+        /// 0: 女
+        /// </summary>
+        /// <param name="idCard">身份证</param>
+        /// <returns>1: 男, 0: 女, -1: 不是有效的身份证</returns>
+        public static string IdCardSex(this string idCard)
+        {
+            if (!idCard.IsIdentityCard())
+                return "-1";
+            var sex = idCard.Substring(14, 3);
+            if (int.Parse(sex) % 2 == 0)//性别代码为偶数是女性奇数为男性
+            {
+                return "0";
+            }
+            else
+            {
+                return "1";
+            }
+
+        }
 
         /// <summary>
         /// 用正则表达式判断字符是不是汉字
@@ -239,6 +285,23 @@ namespace HotPot.Utility.Net45.Extension
             compressedzipStream.Write(rawData, 0, rawData.Length);
             compressedzipStream.Close();
             return ms.ToArray();
+        }
+
+        /// <summary>
+        /// 返回随机字符串
+        /// </summary>
+        /// <param name="length">字符串长度</param>
+        /// <returns></returns>
+        public static string GenerateRandomString(int length)
+        {
+            char[] constant = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+            var checkCode = string.Empty;
+            var rd = new Random();
+            for (var i = 0; i < length; i++)
+            {
+                checkCode += constant[rd.Next(36)].ToString();
+            }
+            return checkCode;
         }
 
         /// <summary>

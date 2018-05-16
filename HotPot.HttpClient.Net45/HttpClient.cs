@@ -130,17 +130,21 @@ namespace HotPot.HttpClient.Net45
         /// <param name="charset">编码格式</param>
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">头部信息</param>
+        /// <param name="acceptMediaType">accept媒体信息</param>
         /// <returns>返回结果</returns>
         public async Task<string> PostStringAsync(
             string url,
             object formData = null,
             string charset = "UTF-8",
             string mediaType = "application/json",
-           Dictionary<string, string> headers = null
+           Dictionary<string, string> headers = null,
+            string acceptMediaType = "application/json"
             )
         {
-            return await HttpRequest(new Uri(url), headers, false, HttpMethod.Post, formData, contentType: mediaType,
-                charset: charset);
+            return await HttpRequest(new Uri(url), headers, false, HttpMethod.Post, formData,
+                acceptMediaType,
+                mediaType,
+                charset);
         }
 
         /// <summary>
@@ -150,15 +154,18 @@ namespace HotPot.HttpClient.Net45
         /// <param name="formData"> 请求入参 </param>
         /// <param name="charset">编码格式</param>
         /// <param name="mediaType">头媒体类型</param>
+        /// <param name="headers">头部信息</param>
+        /// <param name="acceptMediaType">accept媒体信息</param>
         /// <returns>返回结果</returns>
         public string PostString(
             string url,
             object formData = null,
             string charset = "UTF-8",
             string mediaType = "application/json",
-        Dictionary<string, string> headers = null)
+        Dictionary<string, string> headers = null,
+            string acceptMediaType = "application/json")
         {
-            return Task.Run(async () => await this.PostStringAsync(url, formData, charset, mediaType, headers)).Result;
+            return Task.Run(async () => await this.PostStringAsync(url, formData, charset, mediaType, headers, acceptMediaType)).Result;
         }
 
         public string TryPostString(string url, string outStr, object formData = null, string charset = "UTF-8",
@@ -248,21 +255,21 @@ namespace HotPot.HttpClient.Net45
 
                     if (formData == null)
                     {
-                        content = new StringContent(string.Empty, encoding);
+                        content = new StringContent(string.Empty, encoding, contentType);
                         message.Content = content;
                     }
                     else
                     {
                         if (formData is string)
                         {
-                            content = new StringContent(formData as string, encoding);
+                            content = new StringContent(formData as string, encoding, contentType);
                         }
                         else
                         {
                             if (contentType == "application/x-www-form-urlencoded")
-                                content = new StringContent(string.Join("&", formData.ToDictionary().Select(m => m.Key + "=" + m.Value)), encoding);
+                                content = new StringContent(string.Join("&", formData.ToDictionary().Select(m => m.Key + "=" + m.Value)), encoding, contentType);
                             else
-                                content = new StringContent(formData.ToJson(), encoding);
+                                content = new StringContent(formData.ToJson(), encoding, contentType);
                         }
                         message.Content = content;
                     }
