@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -6,6 +7,8 @@ namespace HotPot.HttpClient.Net45.Contract
 {
     public interface IHttpClient
     {
+        IList<Cookie> Cookies { get; set; }
+
         byte[] GetByte(string url);
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="param"> The param.  </param>
         /// <param name="headers">请求头部</param>
         /// <returns> The <see cref="string"/>.  </returns>
-        string GetString(string url, object param = null, Dictionary<string, string> headers = null);
+        string GetString(string url, object param = null, Dictionary<string, string> headers = null, Dictionary<string, string> acceptMediaTypes = null);
 
         /// <summary>
         /// 异步 发起 Get 请求并返回 string 类型请求结果
@@ -46,7 +49,7 @@ namespace HotPot.HttpClient.Net45.Contract
         Task<string> GetStringAsync(string requestUri, Dictionary<string, string> headers = null);
 
         Task<string> GetStringAsync(string url, object param = null,
-            Dictionary<string, string> headers = null);
+            Dictionary<string, string> headers = null, Dictionary<string, string> acceptMediaTypes = null);
 
         /// <summary>
         /// 异步请求post
@@ -58,7 +61,7 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="headers">请求头部</param>
         /// <returns></returns>
         Task<string> PostStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null,
-        string acceptMediaType = "application/json"
+        string acceptMediaType = "application/json", Dictionary<string, string> acceptMediaTypes = null
         );
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">请求头部</param>
         /// <returns></returns>
-        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null, string acceptMediaType = "application/json");
+        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null, string acceptMediaType = "application/json", Dictionary<string, string> acceptMediaTypes = null);
 
         /// <summary>
         /// 同步请求post, 请求失败返回 outStr

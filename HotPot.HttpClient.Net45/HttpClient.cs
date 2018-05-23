@@ -25,7 +25,7 @@ namespace HotPot.HttpClient.Net45
 {
     public class HttpClient : IHttpClient
     {
-        public IList<Cookie> _cookies = new List<Cookie>();
+        public IList<Cookie> Cookies { get; set; } = new List<Cookie>();
 
         /// <summary>
         /// http 请求工具类
@@ -55,7 +55,7 @@ namespace HotPot.HttpClient.Net45
         /// <returns>string类型结果</returns>
         public async Task<string> PutStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json")
         {
-            return await HttpRequest(new Uri(url), method:HttpMethod.Put, formData:formData, charset:charset, contentType:mediaType);
+            return await HttpRequest(new Uri(url), method: HttpMethod.Put, formData: formData, charset: charset, contentType: mediaType);
         }
 
         /// <summary>
@@ -64,9 +64,12 @@ namespace HotPot.HttpClient.Net45
         /// <param name="url"> 请求地址. </param>
         /// <param name="param"> 入参 </param>
         /// <returns> string 类型结果. </returns>
-        public string GetString(string url, object param = null, Dictionary<string, string> headers = null)
+        public string GetString(string url, object param = null,
+            Dictionary<string, string> headers = null,
+            Dictionary<string, string> acceptMediaTypes = null
+            )
         {
-            return Task.Run(async () => await this.GetStringAsync(url, param, headers)).Result;
+            return Task.Run(async () => await this.GetStringAsync(url, param, headers, acceptMediaTypes)).Result;
         }
 
         /// <summary>
@@ -80,11 +83,12 @@ namespace HotPot.HttpClient.Net45
             return Task.Run(async () => await this.GetStringAsync(url, param, headers)).Result;
         }
 
-        public async Task<string> GetStringAsync(string url, object param = null, Dictionary<string, string> headers = null)
+        public async Task<string> GetStringAsync(string url, object param = null, Dictionary<string, string> headers = null,
+            Dictionary<string, string> acceptMediaTypes = null)
         {
             if (param != null)
             {
-                return await this.GetStringAsync(url, (Dictionary<string, object>)param.ToDictionary(), headers);
+                return await this.GetStringAsync(url, (Dictionary<string, object>)param.ToDictionary(), headers, acceptMediaTypes: acceptMediaTypes);
             }
 
             return await this.GetStringAsync(url, new Dictionary<string, object>(), headers);
@@ -138,13 +142,15 @@ namespace HotPot.HttpClient.Net45
             string charset = "UTF-8",
             string mediaType = "application/json",
            Dictionary<string, string> headers = null,
-            string acceptMediaType = "application/json"
+            string acceptMediaType = "application/json",
+            Dictionary<string, string> acceptMediaTypes = null
             )
         {
             return await HttpRequest(new Uri(url), headers, false, HttpMethod.Post, formData,
                 acceptMediaType,
                 mediaType,
-                charset);
+                charset,
+                acceptMediaTypes);
         }
 
         /// <summary>
@@ -163,9 +169,11 @@ namespace HotPot.HttpClient.Net45
             string charset = "UTF-8",
             string mediaType = "application/json",
         Dictionary<string, string> headers = null,
-            string acceptMediaType = "application/json")
+            string acceptMediaType = "application/json",
+            Dictionary<string, string> acceptMediaTypes = null
+            )
         {
-            return Task.Run(async () => await this.PostStringAsync(url, formData, charset, mediaType, headers, acceptMediaType)).Result;
+            return Task.Run(async () => await this.PostStringAsync(url, formData, charset, mediaType, headers, acceptMediaType, acceptMediaTypes)).Result;
         }
 
         public string TryPostString(string url, string outStr, object formData = null, string charset = "UTF-8",
@@ -232,11 +240,11 @@ namespace HotPot.HttpClient.Net45
             }
         }
 
-
         public async Task<string> HttpRequest(Uri baseAddress, Dictionary<string, string> heads = null, bool isGzip = false, HttpMethod method = null, object formData = null,
     string acceptMediaType = "application/json",
     string contentType = "application/x-www-form-urlencoded",
-        string charset = "UTF-8"
+        string charset = "UTF-8",
+            Dictionary<string, string> acceptMediaTypes = null
     )
         {
             if (method == null)
@@ -274,7 +282,22 @@ namespace HotPot.HttpClient.Net45
                         message.Content = content;
                     }
 
+                    // 
                     message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptMediaType));
+                    if (acceptMediaTypes != null)
+                    {
+                        foreach (var mediaType in acceptMediaTypes)
+                        {
+                            if (!mediaType.Value.IsNullOrEmpty())
+                            {
+                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType.Key, Convert.ToDouble(mediaType.Value)));
+                            }
+                            else
+                            {
+                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType.Key));
+                            }
+                        }
+                    }
                 }
                 if (heads != null)
                 {
@@ -309,7 +332,7 @@ namespace HotPot.HttpClient.Net45
         private string GetCookie()
         {
             var cookieString = new StringBuilder();
-            foreach (var cookie in this._cookies)
+            foreach (var cookie in this.Cookies)
             {
                 if (cookie == null) continue;
 
@@ -352,13 +375,13 @@ namespace HotPot.HttpClient.Net45
                 }
             }
 
-            var deleteCookie = this._cookies.SingleOrDefault(m => m.Name == cookie.Name);
+            var deleteCookie = this.Cookies.SingleOrDefault(m => m.Name == cookie.Name);
             if (deleteCookie != null)
             {
-                this._cookies.Remove(deleteCookie);
+                this.Cookies.Remove(deleteCookie);
             }
 
-            this._cookies.Add(cookie);
+            this.Cookies.Add(cookie);
         }
 
     }
