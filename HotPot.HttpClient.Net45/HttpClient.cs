@@ -88,30 +88,15 @@ namespace HotPot.HttpClient.Net45
         {
             if (param != null)
             {
-                return await this.GetStringAsync(url, (Dictionary<string, object>)param.ToDictionary(), headers, acceptMediaTypes: acceptMediaTypes);
+                var dictionary = (Dictionary<string, object>)param.ToDictionary();
+                if (dictionary.Count != 0)
+                {
+                    url = $"{url}?{string.Join("&", dictionary.Select(m => m.Key + "=" + m.Value).ToList())}";
+                }
             }
 
-            return await this.GetStringAsync(url, new Dictionary<string, object>(), headers);
-        }
-
-        private async Task<string> GetStringAsync(string url, Dictionary<string, object> param = null, Dictionary<string, string> headers = null)
-        {
-            if (param != null && param.Count != 0)
-            {
-                url = $"{url}?{string.Join("&", param.Select(m => m.Key + "=" + m.Value).ToList())}";
-            }
-
-            return await this.GetStringAsync(url, headers);
-        }
-
-        /// <summary>
-        /// 异步 发起 Get 请求并返回 string 类型请求结果
-        /// </summary>
-        /// <param name="requestUri">请求地址 . </param>
-        /// <returns>请求结果</returns>
-        public async Task<string> GetStringAsync(string requestUri, Dictionary<string, string> headers)
-        {
-            var url = this.GetUrl(requestUri);
+            // return await this.GetStringAsync(url, new Dictionary<string, object>(), headers);
+            url = this.GetUrl(url);
             try
             {
                 return await HttpRequest(new Uri(url), headers, false, HttpMethod.Get);
@@ -124,6 +109,7 @@ namespace HotPot.HttpClient.Net45
             {
                 throw new Exception($"请求地址: {url}", e);
             }
+
         }
 
         /// <summary>

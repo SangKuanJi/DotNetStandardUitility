@@ -40,14 +40,6 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <returns> The <see cref="string"/>.  </returns>
         string GetString(string url, object param = null, Dictionary<string, string> headers = null, Dictionary<string, string> acceptMediaTypes = null);
 
-        /// <summary>
-        /// 异步 发起 Get 请求并返回 string 类型请求结果
-        /// </summary>
-        /// <param name="requestUri">请求地址 . </param>
-        /// <param name="headers">请求头部</param>
-        /// <returns>请求结果</returns>
-        Task<string> GetStringAsync(string requestUri, Dictionary<string, string> headers = null);
-
         Task<string> GetStringAsync(string url, object param = null,
             Dictionary<string, string> headers = null, Dictionary<string, string> acceptMediaTypes = null);
 

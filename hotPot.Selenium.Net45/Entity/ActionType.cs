@@ -4,6 +4,8 @@
     {
         GoUrl,
         Click,
+        Scroll,
+        RemoveReadonly,
         Find,
         Finds,
         SendKeys,

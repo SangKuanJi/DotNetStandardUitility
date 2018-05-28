@@ -53,5 +53,7 @@ namespace hotPot.Selenium.Net45.Entity
         /// 表达式
         /// </summary>
         public Expression<Func<IWebElement, bool>> Expression { get; set; }
+
+        public int Height { get; set; }
     }
 }

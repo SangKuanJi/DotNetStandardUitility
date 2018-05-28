@@ -23,6 +23,18 @@ namespace HotPot.Utility.Net45.Extension
     /// </summary>
     public static class StringExtension
     {
+        public static int TryToInt(this string value)
+        {
+            try
+            {
+                return int.Parse(value);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         /// <summary>
         /// 替换为空
         /// </summary>

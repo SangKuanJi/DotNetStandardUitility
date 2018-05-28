@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.HttpClient.Net45", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.Selenium.Net45", "hotPot.Selenium.Net45\HotPot.Selenium.Net45.csproj", "{4FF7BA38-39C4-46FF-8548-CC01E8EA58B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.YiMa.Net45", "HotPot.YiMa.Net45\HotPot.YiMa.Net45.csproj", "{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.YiMa.Net45Tests", "HotPot.YiMa.Net45Tests\HotPot.YiMa.Net45Tests.csproj", "{8A7BB1D4-837F-41B1-A398-FBA787E944BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{4FF7BA38-39C4-46FF-8548-CC01E8EA58B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FF7BA38-39C4-46FF-8548-CC01E8EA58B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FF7BA38-39C4-46FF-8548-CC01E8EA58B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7BB1D4-837F-41B1-A398-FBA787E944BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7BB1D4-837F-41B1-A398-FBA787E944BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7BB1D4-837F-41B1-A398-FBA787E944BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7BB1D4-837F-41B1-A398-FBA787E944BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

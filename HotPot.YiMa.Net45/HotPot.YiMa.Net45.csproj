@@ -4,17 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5DB4EF58-A26C-4B5E-830E-929EF49A68BE}</ProjectGuid>
+    <ProjectGuid>{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HotPot.Utility.Net45</RootNamespace>
-    <AssemblyName>HotPot.Utility.Net45</AssemblyName>
+    <RootNamespace>HotPot.YiMa.Net45</RootNamespace>
+    <AssemblyName>HotPot.YiMa.Net45</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,18 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,21 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurManager\ConfigurHandler.cs" />
-    <Compile Include="Extension\BitmapExtension.cs" />
-    <Compile Include="Extension\DateTimeExtension.cs" />
-    <Compile Include="Extension\DebugExtension.cs" />
-    <Compile Include="Extension\MapperExtension.cs" />
-    <Compile Include="Extension\ObjectExtension.cs" />
-    <Compile Include="Extension\WebDriverExtensions.cs" />
-    <Compile Include="Helper\RetryHelper.cs" />
-    <Compile Include="Model\NormalResult.cs" />
+    <Compile Include="Entity\UserInfo.cs" />
+    <Compile Include="YiMaService.cs" />
+    <Compile Include="Contract\IYiMaService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Extension\StringExtension.cs" />
-    <Compile Include="Extension\TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotPot.HttpClient.Net45\HotPot.HttpClient.Net45.csproj">
+      <Project>{773a7dfe-359a-4fda-a4c2-c1583de2a224}</Project>
+      <Name>HotPot.HttpClient.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HotPot.Utility.Net45\HotPot.Utility.Net45.csproj">
+      <Project>{5DB4EF58-A26C-4B5E-830E-929EF49A68BE}</Project>
+      <Name>HotPot.Utility.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

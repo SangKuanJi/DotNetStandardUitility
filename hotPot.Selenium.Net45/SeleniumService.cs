@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -13,19 +14,23 @@ using hotPot.Selenium.Net45.Extension;
 using HotPot.Utility.Net45.Extension;
 using HotPot.Utility.Net45.Model;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.PhantomJS;
+using OpenQA.Selenium.Remote;
 
 namespace hotPot.Selenium.Net45
 {
     public class SeleniumService : IDisposable
     {
         public Queue<SeleniumEntity> SeleniumEntities;
-        public PhantomJSDriver DriverService;
+
+        // public PhantomJSDriver DriverService;
+
+        public RemoteWebDriver DriverService;
 
         public void Quit()
         {
             this.DriverService.Quit();
-            // this.DriverService.Close();
             this.DriverService.Dispose();
         }
 
@@ -37,14 +42,23 @@ namespace hotPot.Selenium.Net45
 
         public void GetDriver()
         {
-            var phantomJsDriverService = PhantomJSDriverService.CreateDefaultService();
-            phantomJsDriverService.IgnoreSslErrors = true;
-            phantomJsDriverService.LoadImages = true;
-            phantomJsDriverService.ProxyType = "none";
+//            var phantomJsDriverService = PhantomJSDriverService.CreateDefaultService();
+//            phantomJsDriverService.IgnoreSslErrors = true;
+//            phantomJsDriverService.LoadImages = true;
+//            phantomJsDriverService.ProxyType = "none";
+//#if !DEBUG
+//            phantomJsDriverService.HideCommandPromptWindow = true;
+//#endif
+            //DriverService = new PhantomJSDriver(phantomJsDriverService);
+            var chromeDriverService = ChromeDriverService.CreateDefaultService();
+            var options = new ChromeOptions();
+            options.AddArgument("disable-infobars");
 #if !DEBUG
-            phantomJsDriverService.HideCommandPromptWindow = true;
+
+            options.AddArgument("headless");
+            chromeDriverService.HideCommandPromptWindow = true;
 #endif
-            DriverService = new PhantomJSDriver(phantomJsDriverService);
+            this.DriverService = new ChromeDriver(chromeDriverService, options);
             DriverService.Manage().Window.Size = new Size(1920, 1080);
         }
 
@@ -89,12 +103,13 @@ namespace hotPot.Selenium.Net45
             return this;
         }
 
-        public SeleniumService Click(By by = null)
+        public SeleniumService Click(By by = null, string debugKey = "")
         {
             SeleniumEntities.Enqueue(new SeleniumEntity
             {
                 ActionType = ActionType.Click,
-                By = by == null ? null : by
+                By = by == null ? null : by,
+                DebugKey = debugKey
             });
             return this;
         }
@@ -109,12 +124,19 @@ namespace hotPot.Selenium.Net45
             return this;
         }
 
+        public int ToScrollY()
+        {
+            IJavaScriptExecutor js = this.DriverService;
+            var executeScript = js.ExecuteScript($"return window.scrollY;");
+            return int.Parse(executeScript.ToString());
+        }
+
         public void DoTask()
         {
             this.DoTask<string>();
         }
 
-        public T DoTask<T>()
+        public T DoTask<T>(Func<IWebElement, ReadOnlyCollection<IWebElement>, T> func = null)
         {
             try
             {
@@ -160,8 +182,8 @@ namespace hotPot.Selenium.Net45
                             Thread.Sleep(seleniumEntity.MillisecondsTimeout);
                             break;
                         case ActionType.Lambda:
-                            var func = seleniumEntity.Expression.Compile();
-                            findElement = findElements.First(func);
+                            var funcCompile = seleniumEntity.Expression.Compile();
+                            findElement = findElements.First(funcCompile);
                             break;
                         case ActionType.Finds:
                             if (seleniumEntity.IsChild && findElement != null)
@@ -171,9 +193,20 @@ namespace hotPot.Selenium.Net45
                                 findElements = this.DriverService.FindElements(seleniumEntity.By,
                                     seleniumEntity.MillisecondsTimeout);
                             break;
+                        case ActionType.RemoveReadonly:
+                            DoRemoveReadonly(findElement);
+                            break;
+                        case ActionType.Scroll:
+                            DoScrollTo(seleniumEntity.Height);
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+                }
+
+                if (func != null)
+                {
+                    return func(findElement, findElements);
                 }
 
                 if (typeof(T).Name.ToUpper() == "POINT" && findElement != null)
@@ -187,9 +220,14 @@ namespace hotPot.Selenium.Net45
                     return (T)Convert.ChangeType(screenByteArray, typeof(T));
                 }
 
-                if (typeof(T).Name.ToUpper() == "IWEBELEMENT" && findElement != null)
+
+                if (typeof(T).Name.IndexOf("List", StringComparison.Ordinal) != -1)
+                // if (typeof(T).Name.ToUpper() == "IWEBELEMENT" && findElement != null)
                 {
-                    object value = findElement;
+                    var value = new List<IWebElement>
+                    {
+                        findElement
+                    };
                     return (T)Convert.ChangeType(value, typeof(T));
                 }
 
@@ -209,6 +247,50 @@ namespace hotPot.Selenium.Net45
             {
                 return default(T);
             }
+        }
+
+        public SeleniumService ScrollToBottom()
+        {
+            SeleniumEntities.Enqueue(new SeleniumEntity
+            {
+                ActionType = ActionType.Scroll,
+                Height = 9999
+            });
+            return this;
+        }
+
+        private void DoScrollTo(int height)
+        {
+            IJavaScriptExecutor js = this.DriverService;
+            js.ExecuteScript($"window.scrollTo(0, {height});");
+        }
+
+        public SeleniumService ScrollTo(int height)
+        {
+            SeleniumEntities.Enqueue(new SeleniumEntity
+            {
+                ActionType = ActionType.Scroll,
+                Height = height
+            });
+            return this;
+        }
+
+        private void DoRemoveReadonly(IWebElement element)
+        {
+            var elementId = element.GetAttribute("id");
+            String jsString = $"document.getElementById('{elementId}').removeAttribute('readonly')";
+
+            IJavaScriptExecutor js = this.DriverService;
+            js.ExecuteScript(jsString);
+        }
+
+        public SeleniumService RemoveReadonly()
+        {
+            SeleniumEntities.Enqueue(new SeleniumEntity
+            {
+                ActionType = ActionType.RemoveReadonly
+            });
+            return this;
         }
 
         public Point GetPoint()
@@ -267,8 +349,18 @@ namespace hotPot.Selenium.Net45
             return this.DoTask<byte[]>();
         }
 
-        public SeleniumService SaveScreenshot(string path, bool isChild = true)
+        public SeleniumService SaveScreenshot(string path = "", bool isChild = true)
         {
+            if (path.IsNullOrEmpty())
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img");
+                if (!System.IO.Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                path = Path.Combine(path, DateTime.Now.ToString("yyyyMMddhhmmssss") + ".jpg");
+            }
             SeleniumEntities.Enqueue(new SeleniumEntity
             {
                 ActionType = ActionType.Screenshot,
@@ -344,9 +436,38 @@ namespace hotPot.Selenium.Net45
             return this;
         }
 
+        public string TryAlertText()
+        {
+            try
+            {
+                return this.DriverService.SwitchTo().Alert().Text;
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
+        }
+
+        public void TryAlertAccept()
+        {
+            try
+            {
+                this.DriverService.SwitchTo().Alert().Accept();
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
         public IWebElement ToElement()
         {
-            return DoTask<ReadOnlyCollection<IWebElement>>()?.FirstOrDefault();
+            return DoTask<List<IWebElement>>()?.FirstOrDefault();
+        }
+
+        public string Text()
+        {
+            return this.DoTask<string>((element, elements) => element != null ? element.Text : string.Empty);
         }
     }
 }

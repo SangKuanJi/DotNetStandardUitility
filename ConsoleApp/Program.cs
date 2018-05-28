@@ -19,14 +19,14 @@ namespace ConsoleApp
                 .GoToUrl("http://www.shanglv51.com/")
                 .FindElement(By.Id("slide-page"))
                 .DoTask<Point>();
-            Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
+            // Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
 
             normalResult = seleniumService
                 .GoToUrl("https://www.airkunming.com/")
                 .FindElement(By.Id("orgCityLabel"))
                 .DoTask<Point>();
 
-            Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
+            // Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
             Console.ReadLine();
         }
     }
