@@ -128,10 +128,11 @@ namespace HotPot.HttpClient.Net45
             string charset = "UTF-8",
             string mediaType = "application/json",
            Dictionary<string, string> headers = null,
-            string acceptMediaType = "application/json",
+            string acceptMediaType = "*/*",
             Dictionary<string, string> acceptMediaTypes = null
             )
         {
+            url = GetUrl(url);
             return await HttpRequest(new Uri(url), headers, false, HttpMethod.Post, formData,
                 acceptMediaType,
                 mediaType,
@@ -148,6 +149,7 @@ namespace HotPot.HttpClient.Net45
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">头部信息</param>
         /// <param name="acceptMediaType">accept媒体信息</param>
+        /// <param name="acceptMediaTypes">accept媒体信息集合</param>
         /// <returns>返回结果</returns>
         public string PostString(
             string url,
@@ -155,19 +157,33 @@ namespace HotPot.HttpClient.Net45
             string charset = "UTF-8",
             string mediaType = "application/json",
         Dictionary<string, string> headers = null,
-            string acceptMediaType = "application/json",
+            string acceptMediaType = "*/*",
             Dictionary<string, string> acceptMediaTypes = null
             )
         {
             return Task.Run(async () => await this.PostStringAsync(url, formData, charset, mediaType, headers, acceptMediaType, acceptMediaTypes)).Result;
         }
 
-        public string TryPostString(string url, string outStr, object formData = null, string charset = "UTF-8",
-            string mediaType = "application/json", Dictionary<string, string> headers = null)
+        public string TryPostString(string url,
+            string outStr,
+            object formData = null,
+            string charset = "UTF-8",
+            string mediaType = "application/json",
+            Dictionary<string, string> headers = null,
+            string acceptMediaType = "*/*",
+            Dictionary<string, string> acceptMediaTypes = null
+            )
         {
             try
             {
-                return this.PostString(url, formData, charset, mediaType, headers);
+                return this.PostString(url,
+                    formData, 
+                    charset,
+                    mediaType, 
+                    headers,
+                    acceptMediaType,
+                    acceptMediaTypes
+                    );
             }
             catch (Exception e)
             {
@@ -227,7 +243,7 @@ namespace HotPot.HttpClient.Net45
         }
 
         public async Task<string> HttpRequest(Uri baseAddress, Dictionary<string, string> heads = null, bool isGzip = false, HttpMethod method = null, object formData = null,
-    string acceptMediaType = "application/json",
+    string acceptMediaType = "*/*",
     string contentType = "application/x-www-form-urlencoded",
         string charset = "UTF-8",
             Dictionary<string, string> acceptMediaTypes = null

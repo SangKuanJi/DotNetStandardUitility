@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("HotPot.Utility.Net45")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("工具类")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("sangkuanji@gmail.com")]
 [assembly: AssemblyProduct("HotPot.Utility.Net45")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
+[assembly: AssemblyCopyright("Copyright © sangkuanji@gmail.com 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

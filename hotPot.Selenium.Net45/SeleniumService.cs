@@ -1,4 +1,14 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="SeleniumService.cs" company="Personage Enterprises">
+// * Copyright (C) 2018 qinchaoyue 版权所有。
+// * version : 1.0
+// * author  : qinchaoyue
+// * FileName: SeleniumService.cs
+// * history : created by qinchaoyue 2018-05-28 04:48:12
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

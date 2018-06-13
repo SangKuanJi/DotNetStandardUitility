@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotPot.HttpClient.Contract;
 using HotPot.Utility.Net45;
+using HotPot.Utility.Net45.Extension;
 
 namespace HotPot.HttpClient.Extension
 {

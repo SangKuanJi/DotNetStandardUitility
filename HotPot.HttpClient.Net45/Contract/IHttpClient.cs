@@ -51,9 +51,10 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="charset">编码格式</param>
         /// <param name="mediaType">头媒体类型</param>
         /// <param name="headers">请求头部</param>
+        /// <param name="acceptMediaType"></param>
         /// <returns></returns>
         Task<string> PostStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null,
-        string acceptMediaType = "application/json", Dictionary<string, string> acceptMediaTypes = null
+        string acceptMediaType = "*/*", Dictionary<string, string> acceptMediaTypes = null
         );
 
         /// <summary>
@@ -63,9 +64,11 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="formData">入参</param>
         /// <param name="charset">编码格式</param>
         /// <param name="mediaType">头媒体类型</param>
+        /// <param name="acceptMediaType">accept 媒体类型</param>
         /// <param name="headers">请求头部</param>
+        /// <param name="acceptMediaTypes">accept 媒体集合</param>
         /// <returns></returns>
-        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null, string acceptMediaType = "application/json", Dictionary<string, string> acceptMediaTypes = null);
+        string PostString(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null, string acceptMediaType = "*/*", Dictionary<string, string> acceptMediaTypes = null);
 
         /// <summary>
         /// 同步请求post, 请求失败返回 outStr
@@ -75,8 +78,19 @@ namespace HotPot.HttpClient.Net45.Contract
         /// <param name="formData">入参</param>
         /// <param name="charset">编码格式</param>
         /// <param name="mediaType">头媒体类型</param>
+        /// <param name="acceptMediaType">accept 媒体类型</param>
         /// <param name="headers">请求头部</param>
+        /// <param name="acceptMediaTypes">accept 媒体集合</param>
         /// <returns></returns>
-        string TryPostString(string url, string outStr, object formData = null, string charset = "UTF-8", string mediaType = "application/json", Dictionary<string, string> headers = null);
+        string TryPostString(
+            string url,
+            string outStr,
+            object formData = null,
+            string charset = "UTF-8",
+            string mediaType = "application/json",
+            Dictionary<string, string> headers = null,
+            string acceptMediaType = "*/*",
+            Dictionary<string, string> acceptMediaTypes = null
+        );
     }
 }

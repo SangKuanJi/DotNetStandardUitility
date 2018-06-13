@@ -11,7 +11,6 @@ namespace HotPot.YiMa.Net45.Contract
     {
         UserInfo UserInfo { get; set; }
         string Message { get; set; }
-
         string Token { get; set; }
         string Mobile { get; set; }
 

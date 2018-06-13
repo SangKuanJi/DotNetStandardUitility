@@ -1,4 +1,14 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="SeleniumEntity.cs" company="Personage Enterprises">
+// * Copyright (C) 2018 qinchaoyue 版权所有。
+// * version : 1.0
+// * author  : qinchaoyue
+// * FileName: SeleniumEntity.cs
+// * history : created by qinchaoyue 2018-05-28 04:08:13
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;

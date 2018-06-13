@@ -1,4 +1,14 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="WebDriverExtensions.cs" company="Personage Enterprises">
+// * Copyright (C) 2018 qinchaoyue 版权所有。
+// * version : 1.0
+// * author  : qinchaoyue
+// * FileName: WebDriverExtensions.cs
+// * history : created by qinchaoyue 2018-05-28 04:54:12
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

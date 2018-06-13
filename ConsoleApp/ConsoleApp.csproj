@@ -60,6 +60,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HotPot.HttpClient.Net45\HotPot.HttpClient.Net45.csproj">
+      <Project>{773a7dfe-359a-4fda-a4c2-c1583de2a224}</Project>
+      <Name>HotPot.HttpClient.Net45</Name>
+    </ProjectReference>
     <ProjectReference Include="..\hotPot.Selenium.Net45\HotPot.Selenium.Net45.csproj">
       <Project>{4FF7BA38-39C4-46FF-8548-CC01E8EA58B3}</Project>
       <Name>HotPot.Selenium.Net45</Name>

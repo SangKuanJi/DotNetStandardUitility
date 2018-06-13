@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.Selenium.Net45", "ho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.YiMa.Net45", "HotPot.YiMa.Net45\HotPot.YiMa.Net45.csproj", "{725E0EB1-AAA9-482A-9CB2-53C1C0B25534}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.YiMa.Net45Tests", "HotPot.YiMa.Net45Tests\HotPot.YiMa.Net45Tests.csproj", "{8A7BB1D4-837F-41B1-A398-FBA787E944BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPot.YiMa.Net45.Tests", "HotPot.YiMa.Net45Tests\HotPot.YiMa.Net45.Tests.csproj", "{8A7BB1D4-837F-41B1-A398-FBA787E944BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
