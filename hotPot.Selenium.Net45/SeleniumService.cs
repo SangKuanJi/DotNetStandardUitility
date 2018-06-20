@@ -44,25 +44,32 @@ namespace hotPot.Selenium.Net45
             this.DriverService.Dispose();
         }
 
-        public SeleniumService()
+        public SeleniumService(string proxyIp = "", string proxyPort = "")
         {
             SeleniumEntities = new Queue<SeleniumEntity>();
-            GetDriver();
+            GetDriver(proxyIp, proxyPort);
         }
 
-        public void GetDriver()
+        public void GetDriver(string proxyIp, string proxyPort)
         {
-//            var phantomJsDriverService = PhantomJSDriverService.CreateDefaultService();
-//            phantomJsDriverService.IgnoreSslErrors = true;
-//            phantomJsDriverService.LoadImages = true;
-//            phantomJsDriverService.ProxyType = "none";
-//#if !DEBUG
-//            phantomJsDriverService.HideCommandPromptWindow = true;
-//#endif
+            //            var phantomJsDriverService = PhantomJSDriverService.CreateDefaultService();
+            //            phantomJsDriverService.IgnoreSslErrors = true;
+            //            phantomJsDriverService.LoadImages = true;
+            //            phantomJsDriverService.ProxyType = "none";
+            //#if !DEBUG
+            //            phantomJsDriverService.HideCommandPromptWindow = true;
+            //#endif
             //DriverService = new PhantomJSDriver(phantomJsDriverService);
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             var options = new ChromeOptions();
-            options.AddArgument("disable-infobars");
+            // options.AddUserProfilePreference("profile.default_content_setting_values.images", 2);
+            var argument = $"disable-infobars";
+            if (!proxyIp.IsNullOrEmpty() && !proxyPort.IsNullOrEmpty())
+            {
+                argument = $"disable-infobars --proxy-server=socks5://{proxyIp}:{proxyPort}";
+            }
+
+            options.AddArgument(argument);
 #if !DEBUG
 
             options.AddArgument("headless");
@@ -124,6 +131,15 @@ namespace hotPot.Selenium.Net45
             return this;
         }
 
+        public SeleniumService Clear()
+        {
+            SeleniumEntities.Enqueue(new SeleniumEntity
+            {
+                ActionType = ActionType.Clear,
+            });
+            return this;
+        }
+
         public SeleniumService SendKeys(string keys)
         {
             SeleniumEntities.Enqueue(new SeleniumEntity
@@ -162,7 +178,7 @@ namespace hotPot.Selenium.Net45
                     {
                         case ActionType.GoUrl:
                             this.DriverService.Navigate().GoToUrl(seleniumEntity.Url);
-                            this.DriverService.PageSource.WriteLine();
+                            // this.DriverService.PageSource.WriteLine();
                             break;
                         case ActionType.Click:
                             if (seleniumEntity.By == null)
@@ -208,6 +224,12 @@ namespace hotPot.Selenium.Net45
                             break;
                         case ActionType.Scroll:
                             DoScrollTo(seleniumEntity.Height);
+                            break;
+                        case ActionType.Clear:
+                            findElement.Clear();
+                            break;
+                        case ActionType.SetAttribute:
+                            DoSetValue(findElement, seleniumEntity.Value);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -255,8 +277,15 @@ namespace hotPot.Selenium.Net45
             }
             catch (Exception e)
             {
+                this.SeleniumEntities.Clear();
                 return default(T);
             }
+        }
+
+        private void DoSetValue(IWebElement findElement, string value)
+        {
+            IJavaScriptExecutor js = this.DriverService;
+            js.ExecuteScript($"arguments[0].value=arguments[1]", findElement, value);
         }
 
         public SeleniumService ScrollToBottom()
@@ -299,6 +328,16 @@ namespace hotPot.Selenium.Net45
             SeleniumEntities.Enqueue(new SeleniumEntity
             {
                 ActionType = ActionType.RemoveReadonly
+            });
+            return this;
+        }
+
+        public SeleniumService SetValue(string value)
+        {
+            this.SeleniumEntities.Enqueue(new SeleniumEntity
+            {
+                ActionType = ActionType.SetAttribute,
+                Value = value
             });
             return this;
         }
@@ -466,7 +505,7 @@ namespace hotPot.Selenium.Net45
             }
             catch (Exception e)
             {
-                
+
             }
         }
 
@@ -475,7 +514,7 @@ namespace hotPot.Selenium.Net45
             return DoTask<List<IWebElement>>()?.FirstOrDefault();
         }
 
-        public string Text()
+        public string ToText()
         {
             return this.DoTask<string>((element, elements) => element != null ? element.Text : string.Empty);
         }

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("hotPot.Selenium.Net45")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("https://github.com/SangKuanJi/DotNetStandardUitility")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("SangKuanJi")]
 [assembly: AssemblyProduct("hotPot.Selenium.Net45")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
+[assembly: AssemblyCopyright("Copyright © SangKuanJi 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

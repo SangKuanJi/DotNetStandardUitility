@@ -36,6 +36,27 @@ namespace HotPot.Utility.Net45.Extension
         }
 
         /// <summary>
+        /// 获取字符串中的数字
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static decimal GetNumber(this string str)
+        {
+            decimal result = 0;
+            if (!string.IsNullOrEmpty(str))
+            {
+                // 正则表达式剔除非数字字符（不包含小数点.） 
+                str = Regex.Replace(str, @"[^\d.\d]", "");
+                // 如果是数字，则转换为decimal类型 
+                if (Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$"))
+                {
+                    result = decimal.Parse(str);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 替换为空
         /// </summary>
         /// <param name="value">原始字符串</param>
