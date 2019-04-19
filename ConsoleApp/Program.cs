@@ -19,7 +19,7 @@ namespace ConsoleApp
         {
             new SeleniumService()
                 .GoToUrl("http://172.17.1.246:4330")
-                .FindElementById("username").SetValue("18381695586")
+                .FindElementById("username").SetValue("1")
                 .FindElementById("password").SetValue("123456");
 
             Console.ReadLine();
