@@ -13,6 +13,7 @@ namespace hotPot.Selenium.Net45.Entity
     public enum ActionType
     {
         GoUrl,
+        Clear,
         Click,
         Scroll,
         RemoveReadonly,
@@ -21,6 +22,7 @@ namespace hotPot.Selenium.Net45.Entity
         SendKeys,
         Screenshot,
         Sleep,
-        Lambda
+        Lambda,
+        SetAttribute
     }
 }

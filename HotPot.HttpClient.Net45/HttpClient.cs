@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Extreme.Net;
 using HotPot.HttpClient.Net45.Contract;
 using HotPot.Utility.Net45.ConfigurManager;
 using HotPot.Utility.Net45.Extension;
@@ -26,6 +27,8 @@ namespace HotPot.HttpClient.Net45
     public class HttpClient : IHttpClient
     {
         public IList<Cookie> Cookies { get; set; } = new List<Cookie>();
+        public string MediaType { get; set; } = string.Empty;
+        public string AcceptMediaType { get; set; } = string.Empty;
 
         /// <summary>
         /// http 请求工具类
@@ -55,7 +58,7 @@ namespace HotPot.HttpClient.Net45
         /// <returns>string类型结果</returns>
         public async Task<string> PutStringAsync(string url, object formData = null, string charset = "UTF-8", string mediaType = "application/json")
         {
-            return await HttpRequest(new Uri(url), method: HttpMethod.Put, formData: formData, charset: charset, contentType: mediaType);
+            return await HttpRequest(new Uri(url), method: HttpMethod.Put, formData: formData, charset: charset, mediaType: mediaType);
         }
 
         /// <summary>
@@ -177,9 +180,9 @@ namespace HotPot.HttpClient.Net45
             try
             {
                 return this.PostString(url,
-                    formData, 
+                    formData,
                     charset,
-                    mediaType, 
+                    mediaType,
                     headers,
                     acceptMediaType,
                     acceptMediaTypes
@@ -220,35 +223,63 @@ namespace HotPot.HttpClient.Net45
             return url;
         }
 
-        public byte[] GetByte(string url)
+        public byte[] GetByte(string url, string proxyIp = "", int proxyPort = 0)
         {
-            return HttpRequestByte(new Uri(url)).Result;
+            return HttpRequestByte(new Uri(url), proxyIp, proxyPort).Result;
         }
 
-        public async Task<byte[]> HttpRequestByte(Uri baseAddress)
+        public async Task<byte[]> HttpRequestByte(Uri baseAddress, string proxyIp = "", int proxyPort = 0)
         {
-            using (var handler = new HttpClientHandler { UseCookies = false })
-            using (var client = new System.Net.Http.HttpClient(handler) { BaseAddress = baseAddress })
+            try
             {
-                var message = new HttpRequestMessage(HttpMethod.Get, baseAddress.PathAndQuery);
-                message.Headers.Add("Cookie", GetCookie());
-                var result = client.SendAsync(message).Result;
-                if (result.Headers.TryGetValues("Set-Cookie", out var cookie))
+                // var webProxy = new WebProxy($"socks5://{proxyIp}:{proxyPort}");
+                var socksProxy = new Socks5ProxyClient(proxyIp, proxyPort);
+                // var webProxy = new ProxyHandler(socksProxy);
+                if (proxyIp.IsNullOrEmpty())
                 {
-                    cookie.ToList().ForEach(m => SetCookie(m));
+                    socksProxy = null;
                 }
-                result.EnsureSuccessStatusCode();
-                return await result.Content.ReadAsByteArrayAsync();
+
+                using (var handler = new ProxyHandler(socksProxy))
+                using (var client = new System.Net.Http.HttpClient(handler) { BaseAddress = baseAddress })
+                {
+                    var message = new HttpRequestMessage(HttpMethod.Get, baseAddress.PathAndQuery);
+                    var cookieValue = GetCookie();
+                    if (!cookieValue.IsNullOrEmpty())
+                    {
+                        message.Headers.Add("Cookie", cookieValue);
+                    }
+                    var result = client.SendAsync(message).Result;
+                    if (result.Headers.TryGetValues("Set-Cookie", out var cookie))
+                    {
+                        cookie.ToList().ForEach(m => SetCookie(m));
+                    }
+                    result.EnsureSuccessStatusCode();
+                    return await result.Content.ReadAsByteArrayAsync();
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+         
         }
 
-        public async Task<string> HttpRequest(Uri baseAddress, Dictionary<string, string> heads = null, bool isGzip = false, HttpMethod method = null, object formData = null,
+        private async Task<string> HttpRequest(Uri baseAddress, Dictionary<string, string> heads = null, bool isGzip = false, HttpMethod method = null, object formData = null,
     string acceptMediaType = "*/*",
-    string contentType = "application/x-www-form-urlencoded",
+    string mediaType = "application/json",
         string charset = "UTF-8",
             Dictionary<string, string> acceptMediaTypes = null
     )
         {
+            if (!MediaType.IsNullOrEmpty()) // 如果 MediaType 不为空, 说明用户设置了全局 MediaType
+            {
+                if (mediaType == "application/json") // 如果 MediaType 和默认值不同, 说明用户设置了 MediaType
+                {
+                    mediaType = MediaType;
+                }
+            }
             if (method == null)
             {
                 method = HttpMethod.Get;
@@ -265,21 +296,21 @@ namespace HotPot.HttpClient.Net45
 
                     if (formData == null)
                     {
-                        content = new StringContent(string.Empty, encoding, contentType);
+                        content = new StringContent(string.Empty, encoding, mediaType);
                         message.Content = content;
                     }
                     else
                     {
                         if (formData is string)
                         {
-                            content = new StringContent(formData as string, encoding, contentType);
+                            content = new StringContent(formData as string, encoding, mediaType);
                         }
                         else
                         {
-                            if (contentType == "application/x-www-form-urlencoded")
-                                content = new StringContent(string.Join("&", formData.ToDictionary().Select(m => m.Key + "=" + m.Value)), encoding, contentType);
+                            if (mediaType == "application/x-www-form-urlencoded")
+                                content = new StringContent(string.Join("&", formData.ToDictionary().Select(m => m.Key + "=" + m.Value)), encoding, mediaType);
                             else
-                                content = new StringContent(formData.ToJson(), encoding, contentType);
+                                content = new StringContent(formData.ToJson(), encoding, mediaType);
                         }
                         message.Content = content;
                     }
@@ -288,15 +319,15 @@ namespace HotPot.HttpClient.Net45
                     message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptMediaType));
                     if (acceptMediaTypes != null)
                     {
-                        foreach (var mediaType in acceptMediaTypes)
+                        foreach (var mediaTypeItem in acceptMediaTypes)
                         {
-                            if (!mediaType.Value.IsNullOrEmpty())
+                            if (!mediaTypeItem.Value.IsNullOrEmpty())
                             {
-                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType.Key, Convert.ToDouble(mediaType.Value)));
+                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaTypeItem.Key, Convert.ToDouble(mediaTypeItem.Value)));
                             }
                             else
                             {
-                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType.Key));
+                                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaTypeItem.Key));
                             }
                         }
                     }

@@ -55,6 +55,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="DateTimeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YiMaServiceTests.cs" />
   </ItemGroup>

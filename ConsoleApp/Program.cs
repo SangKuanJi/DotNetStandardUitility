@@ -17,22 +17,11 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            IHttpClient httpClient = new HttpClient();
-            var url = "{DaoDanUrl}/task/api/orderinfo.htm";
-            var postString = httpClient.PostString(url, new { orderIds = "123", orderType = 1 }, mediaType: "application/x-www-form-urlencoded");
-            var seleniumService = new SeleniumService();
-            var normalResult = seleniumService
-                .GoToUrl("http://www.shanglv51.com/")
-                .FindElement(By.Id("slide-page"))
-                .DoTask<Point>();
-            // Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
+            new SeleniumService()
+                .GoToUrl("http://172.17.1.246:4330")
+                .FindElementById("username").SetValue("18381695586")
+                .FindElementById("password").SetValue("123456");
 
-            normalResult = seleniumService
-                .GoToUrl("https://www.airkunming.com/")
-                .FindElement(By.Id("orgCityLabel"))
-                .DoTask<Point>();
-
-            // Console.WriteLine($"X: {normalResult.Data.X}  Y: {normalResult.Data.Y}");
             Console.ReadLine();
         }
     }

@@ -9,7 +9,12 @@ namespace HotPot.HttpClient.Net45.Contract
     {
         IList<Cookie> Cookies { get; set; }
 
-        byte[] GetByte(string url);
+        string MediaType { get; set; }
+
+        string AcceptMediaType { get; set; }
+
+
+        byte[] GetByte(string url, string proxyIp = "", int proxyPort = 0);
 
         /// <summary>
         /// 同步发起Put请求并返回string类型结果
