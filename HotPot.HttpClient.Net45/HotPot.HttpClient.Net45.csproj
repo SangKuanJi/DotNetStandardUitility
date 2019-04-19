@@ -64,7 +64,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Content Include="dll\Extreme.Net.dll" />
+=======
+    <ProjectReference Include="..\..\..\CodeHub\Extreme.Net-master\Extreme.Net.csproj">
+      <Project>{5d25d06e-0d35-42ef-bba2-d5de6e06cd04}</Project>
+      <Name>Extreme.Net</Name>
+    </ProjectReference>
+>>>>>>> 31a7472e9054c8970d28729516e20d63d426e5e5
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
